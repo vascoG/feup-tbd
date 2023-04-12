@@ -1,22 +1,22 @@
-DROP TABLE xdocentes;
-DROP TABLE ydocentes;
-DROP TABLE zdocentes;
-
-DROP TABLE xdsd;
-DROP TABLE ydsd;
-DROP TABLE zdsd;
-
-DROP TABLE xtiposaula;
-DROP TABLE ytiposaula;
-DROP TABLE ztiposaula;
-
-DROP TABLE xocorrencias;
-DROP TABLE yocorrencias;
-DROP TABLE zocorrencias;
-
-DROP TABLE xucs;
-DROP TABLE yucs;
-DROP TABLE zucs;
+--DROP TABLE xdocentes;
+--DROP TABLE ydocentes;
+--DROP TABLE zdocentes;
+--
+--DROP TABLE xdsd;
+--DROP TABLE ydsd;
+--DROP TABLE zdsd;
+--
+--DROP TABLE xtiposaula;
+--DROP TABLE ytiposaula;
+--DROP TABLE ztiposaula;
+--
+--DROP TABLE xocorrencias;
+--DROP TABLE yocorrencias;
+--DROP TABLE zocorrencias;
+--
+--DROP TABLE xucs;
+--DROP TABLE yucs;
+--DROP TABLE zucs;
 
 CREATE TABLE xdocentes AS SELECT * FROM GTD10.xdocentes;
 CREATE TABLE ydocentes AS SELECT * FROM GTD10.xdocentes;
@@ -60,4 +60,3 @@ ALTER TABLE ydsd ADD CONSTRAINT ydsd_fk2 FOREIGN KEY (id) REFERENCES ytiposaula(
 ALTER TABLE zdsd ADD CONSTRAINT zdsd_pk PRIMARY KEY (nr,id);
 ALTER TABLE zdsd ADD CONSTRAINT zdsd_fk1 FOREIGN KEY (nr) REFERENCES zdocentes(nr);
 ALTER TABLE zdsd ADD CONSTRAINT zdsd_fk2 FOREIGN KEY (id) REFERENCES ztiposaula(id);
-
