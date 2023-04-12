@@ -28,3 +28,36 @@ JOIN ytiposaula ON yocorrencias.ano_letivo=ytiposaula.ano_letivo AND yocorrencia
 JOIN ydsd ON ydsd.id=ytiposaula.id
 WHERE yucs.curso='233' AND yocorrencias.ano_letivo='2004/2005';
 
+
+
+--5
+--a create b tree index TODO
+SELECT u.sigla_uc, o.ano_letivo, o.periodo, s.horas_turno
+FROM ztiposaula s JOIN zocorrencias o ON o.codigo=s.codigo AND o.ano_letivo=s.ano_letivo AND o.periodo=s.periodo
+JOIN zucs u ON u.codigo = o.codigo
+WHERE s.tipo='OT' AND s.ano_letivo LIKE '%2003%';
+--b drop b tree index and create bitmap index TODO
+SELECT u.sigla_uc, o.ano_letivo, o.periodo, s.horas_turno
+FROM ztiposaula s JOIN zocorrencias o ON o.codigo=s.codigo AND o.ano_letivo=s.ano_letivo AND o.periodo=s.periodo
+JOIN zucs u ON u.codigo = o.codigo
+WHERE s.tipo='OT' AND s.ano_letivo LIKE '%2003%';
+
+
+--6.x
+SELECT u.curso
+FROM xucs u JOIN xocorrencias o ON u.codigo = o.codigo
+JOIN xtiposaula s ON o.codigo=s.codigo AND o.ano_letivo=s.ano_letivo AND o.periodo=s.periodo
+WHERE s.tipo != 'T' OR s.tipo != 'P' OR s.tipo != 'L' OR s.tipo != 'TP' OR s.tipo != 'OT'
+GROUP BY u.curso HAVING COUNT(DISTINCT s.tipo)>4;
+--6.y
+SELECT u.curso
+FROM yucs u JOIN yocorrencias o ON u.codigo = o.codigo
+JOIN ytiposaula s ON o.codigo=s.codigo AND o.ano_letivo=s.ano_letivo AND o.periodo=s.periodo
+WHERE s.tipo != 'T' OR s.tipo != 'P' OR s.tipo != 'L' OR s.tipo != 'TP' OR s.tipo != 'OT'
+GROUP BY u.curso HAVING COUNT(DISTINCT s.tipo)>4;
+--6.z
+SELECT u.curso
+FROM zucs u JOIN zocorrencias o ON u.codigo = o.codigo
+JOIN ztiposaula s ON o.codigo=s.codigo AND o.ano_letivo=s.ano_letivo AND o.periodo=s.periodo
+WHERE s.tipo != 'T' OR s.tipo != 'P' OR s.tipo != 'L' OR s.tipo != 'TP' OR s.tipo != 'OT'
+GROUP BY u.curso HAVING COUNT(DISTINCT s.tipo)>4;
