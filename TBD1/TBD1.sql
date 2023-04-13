@@ -29,7 +29,7 @@ JOIN yucs u ON o.codigo=u.codigo
 WHERE u.curso=233 AND o.ano_letivo='2004/2005'
 GROUP BY u.curso, o.ano_letivo, s.tipo;
 
---2.y
+--2.z
 SELECT u.curso, o.ano_letivo, tipo, SUM(horas) as hours_planned 
 FROM zdsd d JOIN ztiposaula s ON d.id=s.id
 JOIN zocorrencias o ON o.codigo=s.codigo AND o.ano_letivo=s.ano_letivo AND o.periodo=s.periodo
@@ -37,7 +37,16 @@ JOIN zucs u ON o.codigo=u.codigo
 WHERE u.curso=233 AND o.ano_letivo='2004/2005'
 GROUP BY u.curso, o.ano_letivo, s.tipo;
 
+--3
+--a Which courses (show the code) did have occurrences planned but did not get service assigned in year 2003/2004? 
+SELECT o.codigo
+FROM xocorrencias o
+WHERE o.ano_letivo NOT IN '2004/2005';
 
+--b
+
+
+--4
 
 --5
 --a 
