@@ -14,24 +14,33 @@ WHERE curso='275' AND designacao='Bases de Dados';
 
 
 --2.X
-SELECT xucs.curso,xocorrencias.ano_letivo,xtiposaula.tipo,xdsd.horas FROM xucs
-JOIN xocorrencias ON xucs.codigo=xocorrencias.codigo
-JOIN xtiposaula ON xocorrencias.ano_letivo=xtiposaula.ano_letivo AND xocorrencias.periodo= xtiposaula.periodo AND xocorrencias.codigo=xtiposaula.codigo
-JOIN xdsd ON xdsd.id=xtiposaula.id
-WHERE xucs.curso='233' AND xocorrencias.ano_letivo='2004/2005';
+SELECT u.curso, o.ano_letivo, tipo, SUM(horas) as hours_planned 
+FROM xdsd d JOIN xtiposaula s ON d.id=s.id
+JOIN xocorrencias o ON o.codigo=s.codigo AND o.ano_letivo=s.ano_letivo AND o.periodo=s.periodo
+JOIN xucs u ON o.codigo=u.codigo
+WHERE u.curso=233 AND o.ano_letivo='2004/2005'
+GROUP BY u.curso, o.ano_letivo, s.tipo;
 
 --2.y
+SELECT u.curso, o.ano_letivo, tipo, SUM(horas) as hours_planned
+FROM ydsd d JOIN ytiposaula s ON d.id=s.id
+JOIN yocorrencias o ON o.codigo=s.codigo AND o.ano_letivo=s.ano_letivo AND o.periodo=s.periodo
+JOIN yucs u ON o.codigo=u.codigo
+WHERE u.curso=233 AND o.ano_letivo='2004/2005'
+GROUP BY u.curso, o.ano_letivo, s.tipo;
 
-SELECT yucs.curso,yocorrencias.ano_letivo,ytiposaula.tipo,ydsd.horas FROM yucs
-JOIN yocorrencias ON yucs.codigo=yocorrencias.codigo
-JOIN ytiposaula ON yocorrencias.ano_letivo=ytiposaula.ano_letivo AND yocorrencias.periodo= ytiposaula.periodo AND yocorrencias.codigo=ytiposaula.codigo
-JOIN ydsd ON ydsd.id=ytiposaula.id
-WHERE yucs.curso='233' AND yocorrencias.ano_letivo='2004/2005';
+--2.y
+SELECT u.curso, o.ano_letivo, tipo, SUM(horas) as hours_planned 
+FROM zdsd d JOIN ztiposaula s ON d.id=s.id
+JOIN zocorrencias o ON o.codigo=s.codigo AND o.ano_letivo=s.ano_letivo AND o.periodo=s.periodo
+JOIN zucs u ON o.codigo=u.codigo
+WHERE u.curso=233 AND o.ano_letivo='2004/2005'
+GROUP BY u.curso, o.ano_letivo, s.tipo;
 
 
 
 --5
---a create b tree index TODO
+--a 
 CREATE INDEX tiposaula_idx ON ztiposaula (tipo, ano_letivo);
 
 SELECT u.sigla_uc, o.ano_letivo, o.periodo, s.horas_turno
@@ -39,7 +48,7 @@ FROM ztiposaula s JOIN zocorrencias o ON o.codigo=s.codigo AND o.ano_letivo=s.an
 JOIN zucs u ON u.codigo = o.codigo
 WHERE s.tipo='OT' AND s.ano_letivo LIKE '%2003%';
 
---b drop b tree index and create bitmap index TODO
+--b 
 DROP INDEX tiposaula_idx;
 CREATE BITMAP INDEX tiposaula_idx ON ztiposaula (tipo, ano_letivo);
 
