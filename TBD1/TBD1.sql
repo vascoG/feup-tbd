@@ -12,8 +12,14 @@ JOIN yocorrencias ON yucs.codigo=yocorrencias.codigo
 JOIN ytiposaula ON yocorrencias.ano_letivo=ytiposaula.ano_letivo AND yocorrencias.periodo= ytiposaula.periodo AND yocorrencias.codigo=ytiposaula.codigo
 WHERE curso='275' AND designacao='Bases de Dados';
 
+--1.z
 
---2.X
+SELECT zucs.codigo, zucs.designacao, zocorrencias.ano_letivo, zocorrencias.inscritos,ztiposaula.tipo,ztiposaula.turnos FROM zucs 
+JOIN zocorrencias ON zucs.codigo=zocorrencias.codigo
+JOIN ztiposaula ON zocorrencias.ano_letivo=ztiposaula.ano_letivo AND zocorrencias.periodo= ztiposaula.periodo AND zocorrencias.codigo=ztiposaula.codigo
+WHERE curso='275' AND designacao='Bases de Dados';
+
+--2.x
 SELECT u.curso, o.ano_letivo, tipo, SUM(horas) as hours_planned 
 FROM xdsd d JOIN xtiposaula s ON d.id=s.id
 JOIN xocorrencias o ON o.codigo=s.codigo AND o.ano_letivo=s.ano_letivo AND o.periodo=s.periodo
@@ -37,16 +43,90 @@ JOIN zucs u ON o.codigo=u.codigo
 WHERE u.curso=233 AND o.ano_letivo='2004/2005'
 GROUP BY u.curso, o.ano_letivo, s.tipo;
 
+
 --3
---a Which courses (show the code) did have occurrences planned but did not get service assigned in year 2003/2004? 
+--ax
+SELECT o.codigo, o.periodo
+FROM xocorrencias o 
+WHERE o.ano_letivo='2003/2004'
+AND (o.codigo, o.periodo) NOT IN 
+(SELECT t.codigo, t.periodo FROM xtiposaula t WHERE t.ano_letivo='2003/2004');
+
+--ay
+SELECT o.codigo, o.periodo
+FROM yocorrencias o 
+WHERE o.ano_letivo='2003/2004'
+AND (o.codigo, o.periodo) NOT IN 
+(SELECT t.codigo, t.periodo FROM xtiposaula t WHERE t.ano_letivo='2003/2004');
+--az
+SELECT o.codigo, o.periodo
+FROM zocorrencias o 
+WHERE o.ano_letivo='2003/2004'
+AND (o.codigo, o.periodo) NOT IN 
+(SELECT t.codigo, t.periodo FROM xtiposaula t WHERE t.ano_letivo='2003/2004');
+
+
+--bx
+
 SELECT o.codigo
 FROM xocorrencias o
-WHERE o.ano_letivo NOT IN '2004/2005';
+FULL OUTER JOIN xtiposaula t ON o.ano_letivo=t.ano_letivo AND o.periodo= t.periodo AND o.codigo=t.codigo
+WHERE o.ano_letivo='2003/2004'
+AND t.id IS NULL;
 
---b
+--by
+SELECT o.codigo
+FROM yocorrencias o
+FULL OUTER JOIN ytiposaula t ON o.ano_letivo=t.ano_letivo AND o.periodo= t.periodo AND o.codigo=t.codigo
+WHERE o.ano_letivo='2003/2004'
+AND t.id IS NULL;
+
+--bz
+SELECT o.codigo
+FROM zocorrencias o
+FULL OUTER JOIN ztiposaula t ON o.ano_letivo=t.ano_letivo AND o.periodo= t.periodo AND o.codigo=t.codigo
+WHERE o.ano_letivo='2003/2004'
+AND t.id IS NULL;
 
 
---4
+--4x
+
+CREATE OR REPLACE VIEW somax AS
+SELECT d.nome, d.nr, ds.fator, t.tipo, SUM(ds.horas) horasT
+FROM xdsd ds
+JOIN xdocentes d ON d.nr=ds.nr
+JOIN xtiposaula t ON t.id=ds.id
+WHERE t.ano_letivo='2003/2004'
+GROUP BY t.tipo, d.nr,d.nome,ds.fator;
+
+select nr número, nome, tipo, horasT*fator horasxfator, horasT horas FROM somax WHERE (tipo, horasT) IN (
+SELECT tipo, max(horasT) maximo FROM somax group by tipo);
+
+--4y
+CREATE OR REPLACE VIEW somay AS
+SELECT d.nome, d.nr, ds.fator, t.tipo, SUM(ds.horas) horasT
+FROM ydsd ds
+JOIN ydocentes d ON d.nr=ds.nr
+JOIN ytiposaula t ON t.id=ds.id
+WHERE t.ano_letivo='2003/2004'
+GROUP BY t.tipo, d.nr,d.nome,ds.fator;
+
+select nr número, nome, tipo, horasT*fator horasxfator, horasT horas FROM somay WHERE (tipo, horasT) IN (
+SELECT tipo, max(horasT) maximo FROM somay group by tipo);
+
+--4z
+
+CREATE OR REPLACE VIEW somaz AS
+SELECT d.nome, d.nr, ds.fator, t.tipo, SUM(ds.horas) horasT
+FROM zdsd ds
+JOIN zdocentes d ON d.nr=ds.nr
+JOIN ztiposaula t ON t.id=ds.id
+WHERE t.ano_letivo='2003/2004'
+GROUP BY t.tipo, d.nr,d.nome,ds.fator;
+
+select nr número, nome, tipo, horasT*fator horasxfator, horasT horas FROM somaz WHERE (tipo, horasT) IN (
+SELECT tipo, max(horasT) maximo FROM somaz group by tipo) ;
+
 
 --5
 --a 
