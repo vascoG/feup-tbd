@@ -20,28 +20,28 @@ JOIN ztiposaula ON zocorrencias.ano_letivo=ztiposaula.ano_letivo AND zocorrencia
 WHERE curso='275' AND designacao='Bases de Dados';
 
 --2.x
-SELECT u.curso, o.ano_letivo, tipo, SUM(horas) as hours_planned 
-FROM xdsd d JOIN xtiposaula s ON d.id=s.id
+SELECT tipo, SUM(horas) as hours_planned 
+FROM xtiposaula s JOIN xdsd d  ON d.id=s.id
 JOIN xocorrencias o ON o.codigo=s.codigo AND o.ano_letivo=s.ano_letivo AND o.periodo=s.periodo
 JOIN xucs u ON o.codigo=u.codigo
 WHERE u.curso=233 AND o.ano_letivo='2004/2005'
-GROUP BY u.curso, o.ano_letivo, s.tipo;
-
+GROUP BY s.tipo;
+--
 --2.y
-SELECT u.curso, o.ano_letivo, tipo, SUM(horas) as hours_planned
-FROM ydsd d JOIN ytiposaula s ON d.id=s.id
+SELECT tipo, SUM(horas) as hours_planned
+FROM ytiposaula s JOIN ydsd d  ON d.id=s.id
 JOIN yocorrencias o ON o.codigo=s.codigo AND o.ano_letivo=s.ano_letivo AND o.periodo=s.periodo
 JOIN yucs u ON o.codigo=u.codigo
 WHERE u.curso=233 AND o.ano_letivo='2004/2005'
-GROUP BY u.curso, o.ano_letivo, s.tipo;
+GROUP BY  s.tipo;
 
 --2.z
-SELECT u.curso, o.ano_letivo, tipo, SUM(horas) as hours_planned 
-FROM zdsd d JOIN ztiposaula s ON d.id=s.id
+SELECT tipo, SUM(horas) as hours_planned 
+FROM ztiposaula s JOIN  zdsd d ON d.id=s.id
 JOIN zocorrencias o ON o.codigo=s.codigo AND o.ano_letivo=s.ano_letivo AND o.periodo=s.periodo
 JOIN zucs u ON o.codigo=u.codigo
-WHERE u.curso=233 AND o.ano_letivo='2004/2005'
-GROUP BY u.curso, o.ano_letivo, s.tipo;
+WHERE u.curso=233 AND s.ano_letivo='2004/2005'
+GROUP BY  s.tipo;
 
 
 --3
@@ -57,13 +57,13 @@ SELECT o.codigo, o.periodo
 FROM yocorrencias o 
 WHERE o.ano_letivo='2003/2004'
 AND (o.codigo, o.periodo) NOT IN 
-(SELECT t.codigo, t.periodo FROM xtiposaula t WHERE t.ano_letivo='2003/2004');
+(SELECT t.codigo, t.periodo FROM ytiposaula t WHERE t.ano_letivo='2003/2004');
 --az
 SELECT o.codigo, o.periodo
 FROM zocorrencias o 
 WHERE o.ano_letivo='2003/2004'
 AND (o.codigo, o.periodo) NOT IN 
-(SELECT t.codigo, t.periodo FROM xtiposaula t WHERE t.ano_letivo='2003/2004');
+(SELECT t.codigo, t.periodo FROM ztiposaula t WHERE t.ano_letivo='2003/2004');
 
 
 --bx
@@ -99,8 +99,8 @@ JOIN xtiposaula t ON t.id=ds.id
 WHERE t.ano_letivo='2003/2004'
 GROUP BY t.tipo, d.nr,d.nome,ds.fator;
 
-select nr número, nome, tipo, horasT*fator horasxfator, horasT horas FROM somax WHERE (tipo, horasT) IN (
-SELECT tipo, max(horasT) maximo FROM somax group by tipo);
+SELECT nr número, nome, tipo, horasT*fator horasxfator, horasT horas FROM somax WHERE (tipo, horasT) IN (
+SELECT tipo, MAX(horasT) maximo FROM somax GROUP BY tipo);
 
 --4y
 CREATE OR REPLACE VIEW somay AS
@@ -111,8 +111,8 @@ JOIN ytiposaula t ON t.id=ds.id
 WHERE t.ano_letivo='2003/2004'
 GROUP BY t.tipo, d.nr,d.nome,ds.fator;
 
-select nr número, nome, tipo, horasT*fator horasxfator, horasT horas FROM somay WHERE (tipo, horasT) IN (
-SELECT tipo, max(horasT) maximo FROM somay group by tipo);
+SELECT nr número, nome, tipo, horasT*fator horasxfator, horasT horas FROM somay WHERE (tipo, horasT) IN (
+SELECT tipo, MAX(horasT) maximo FROM somay GROUP BY tipo);
 
 --4z
 
@@ -124,12 +124,13 @@ JOIN ztiposaula t ON t.id=ds.id
 WHERE t.ano_letivo='2003/2004'
 GROUP BY t.tipo, d.nr,d.nome,ds.fator;
 
-select nr número, nome, tipo, horasT*fator horasxfator, horasT horas FROM somaz WHERE (tipo, horasT) IN (
-SELECT tipo, max(horasT) maximo FROM somaz group by tipo) ;
+SELECT nr número, nome, tipo, horasT*fator horasxfator, horasT horas FROM somaz WHERE (tipo, horasT) IN (
+SELECT tipo, MAX(horasT) maximo FROM somaz GROUP BY tipo) ;
 
 
 --5
 --a 
+DROP INDEX tiposaula_idx;
 CREATE INDEX tiposaula_idx ON ztiposaula (tipo, ano_letivo);
 
 SELECT u.sigla_uc, o.ano_letivo, o.periodo, s.horas_turno
@@ -145,7 +146,6 @@ SELECT u.sigla_uc, o.ano_letivo, o.periodo, s.horas_turno
 FROM ztiposaula s JOIN zocorrencias o ON o.codigo=s.codigo AND o.ano_letivo=s.ano_letivo AND o.periodo=s.periodo
 JOIN zucs u ON u.codigo = o.codigo
 WHERE s.tipo='OT' AND s.ano_letivo LIKE '%2003%';
---Bitmap indexes work best when the indexed columns have high cardinality, i.e., when the number of distinct values is large compared to the total number of rows in the table
 
 --6.x
 SELECT u.curso

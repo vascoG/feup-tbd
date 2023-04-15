@@ -62,4 +62,9 @@ ALTER TABLE zdsd ADD CONSTRAINT zdsd_fk1 FOREIGN KEY (nr) REFERENCES zdocentes(n
 ALTER TABLE zdsd ADD CONSTRAINT zdsd_fk2 FOREIGN KEY (id) REFERENCES ztiposaula(id);
 
 CREATE INDEX ucs_idx ON zucs (curso, designacao);
-CREATE INDEX ocorrencias_idx ON zocurrencias (ano_letivo);
+CREATE INDEX ucs_idx_curso ON zucs (curso);
+CREATE INDEX ocorrencias_idx ON zocorrencias (ano_letivo);
+CREATE INDEX tiposaula_idx_anoletivo ON ztiposaula (ano_letivo);
+
+
+
