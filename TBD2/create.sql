@@ -9,23 +9,31 @@ create or replace type Participacao_t as object(
 
 create or replace type Area_t as object(
     codigo number(6),
-    nome varchar(250))not instantiable not final;
+    nome varchar(250),
+    not instantiable member function votos_partido (sigla varchar2) return number,
+    not instantiable member function votos_total return number)not instantiable not final;
 /
 
 create or replace type Distrito_t under Area_t(
     regiao varchar(1),
-    participacao Participacao_t);
+    participacao Participacao_t,
+    overriding member function votos_partido (sigla varchar2) return number,
+    overriding member function votos_total return number);
 /
     
 create or replace type Concelho_t under Area_t(
-    distrito ref Distrito_t);
+    distrito ref Distrito_t,
+    overriding member function votos_partido (sigla varchar2) return number,
+    overriding member function votos_total return number);
 /
 
 create or replace type Concelho_tab_t as table of ref Concelho_t;
 /
     
 create or replace type Freguesia_t under Area_t(
-    concelho ref Concelho_t);
+    concelho ref Concelho_t,
+    overriding member function votos_partido (sigla varchar2) return number,
+    overriding member function votos_total return number);
 /
 
 create or replace type Freguesia_tab_t as table of ref Freguesia_t;
@@ -57,7 +65,7 @@ create or replace type Votacao_tab_t as table of ref Votacao_t;
 alter type Distrito_t add attribute (listas Lista_tab_t, concelhos Concelho_tab_t) cascade;
 /
 
-alter type Concelho_t add attribute (freguesia Freguesia_tab_t) cascade;
+alter type Concelho_t add attribute (freguesias Freguesia_tab_t) cascade;
 /
 
 alter type Freguesia_t add attribute (votacoes Votacao_tab_t) cascade;
