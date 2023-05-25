@@ -71,7 +71,7 @@ create or replace type body Concelho_t as
 end;
 /
 
-create or replace type body Freguesia_t as 
+create or replace type body Freguesia_t as
     
     overriding member function votos_partido(sigla varchar2) return number is
     r number;
@@ -93,12 +93,12 @@ create or replace type body Freguesia_t as
 end;
 /
 
-alter type Partido_t add map member function mandatos_total return number cascade;
+alter type Partido_t add member function mandatos_total return number cascade;
 alter type Partido_t add member function votos_total return number cascade;
 
 create or replace type body Partido_t as 
 
-    map member function mandatos_total return number is
+    member function mandatos_total return number is
     r number;
     begin
         select nvl(sum(value(l).mandatos),0) into r from table(self.listas) l;
@@ -111,4 +111,21 @@ create or replace type body Partido_t as
         select nvl(sum(value(v).votos),0) into r from table(self.votacoes) v;
         return r;
     end votos_total;
+    
+end;
+/
+
+alter type Lista_t add order member function compare (l Lista_t) return number cascade;
+
+create or replace type body Lista_t as
+
+    order member function compare (l Lista_t) return number is
+    r number;
+    begin
+        if mandatos < l.mandatos then return -1;
+        elsif mandatos > l.mandatos then return 1;
+        else return 0;
+        end if;  
+    end compare;
+    
 end;
