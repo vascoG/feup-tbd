@@ -80,7 +80,7 @@ create table Distrito of Distrito_t
 /
 
 create table Concelho of Concelho_t
-    nested table freguesia store as freguesia_tab;
+    nested table freguesias store as freguesia_tab;
 /
 
 create table Freguesia of Freguesia_t
