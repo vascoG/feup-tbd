@@ -9,3 +9,14 @@ from Distrito d
 where d.integro() = 0;
 
 --f
+select p.sigla
+from Partido p
+where p.sigla
+not in (
+    select p.sigla
+    from Partido p, Distrito d
+    where d.mandatos_partido(p.sigla)=0
+);
+
+    
+    

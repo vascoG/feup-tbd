@@ -15,6 +15,8 @@ end;
 /
 
 alter type Distrito_t add member function integro return number cascade;
+alter type Distrito_t add member function mandatos_partido(sigla varchar2) return number cascade;
+
 
 create or replace type body Distrito_t as 
 
@@ -45,6 +47,13 @@ create or replace type body Distrito_t as
         end if;
         return r;
     end integro;
+    
+    member function mandatos_partido(sigla varchar2) return number is
+    r number;
+    begin
+        select nvl(value(l).mandatos,0) into r from table(self.listas) l where value(l).partido.sigla=sigla;
+        return r;
+    end mandatos_partido;
     
 end;
 /
