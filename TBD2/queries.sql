@@ -1,6 +1,6 @@
 --query a
-select p.sigla, p.designacao, p.mandatos_total() as "Mandatos"
-from Partido p order by value(p) DESC;
+select p.sigla, p.designacao, p.mandatos_total() as Mandatos
+from Partido p order by Mandatos DESC;
 
 --query c
 select c.nome, c.partido_mais_votos().sigla as "Partido com mais votos"
@@ -15,3 +15,7 @@ select l.distrito.nome, l.partido.sigla, mandatos
 from Lista l
 order by value(l) DESC
 fetch first 10 rows only;
+
+--query g2 - Indicate the winning party on each district.
+select d.nome, d.partido_mais_votos().sigla as "Partido com mais votos"
+from Distrito d order by d.nome;
